@@ -37,7 +37,6 @@ class App extends React.Component {
   }
   // <Game name={this.state.game.data[0].name} playing={this.state.game.data[0].playing} visits={this.state.game.data[0].visits} />
   render() {
-    console.log(this.state.gamelist)
     return (
       <div className="App">
         {handleGames(this.state.gamelist)}
