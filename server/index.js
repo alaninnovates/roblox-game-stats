@@ -25,7 +25,6 @@ app.get('/get', (req, res) => {
 })
 
 app.get('/getInfo', (req, res) => {
-  // let gameData = []
   axios.get('https://games.roblox.com/v1/games/list?model.pageContext.isSeeAllPage=true')
     .then(res => res.data)
     .then(data => {
@@ -41,15 +40,6 @@ app.get('/getInfo', (req, res) => {
           })
           res.send(toReturn)
         }))
-        /*
-      data.games.forEach(async game => {
-        // console.log(game);
-        const res = await axios.get(`https://games.roblox.com/v1/games?universeIds=${game.universeId}`)
-        const data = await res.data
-        //console.log(data)
-        gameData.push(data);
-      })
-      */
     })
 })
 
