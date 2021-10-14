@@ -1,48 +1,38 @@
 const app = require('express')();
 const axios = require('axios');
+const cors = require('cors');
 const port = 8000;
 
-app.use(require('express').static('../client/build'));
+app.use(cors());
 
-app.get('/list', (req, res) => {
-  axios.get('https://games.roblox.com/v1/games/list?model.pageContext.isSeeAllPage=true')
-    .then(res => res.data)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      console.error(err)
-    })
-})
+app.get('/list', async (_req, res) => {
+	const gameList = await axios.get(
+		'https://games.roblox.com/v1/games/list?model.pageContext.isSeeAllPage=true'
+	);
+	res.send(gameList.data);
+});
 
 app.get('/get', (req, res) => {
-  id = req.params.id;
-  axios.get(`https://games.roblox.com/v1/games?universeIds=${id}`)
-    .then(res => res.data)
-    .then(data => {
-      res.send(data);
-    })
-})
+	const id = req.params.id;
+	const gameData = await axios.get(
+		`https://games.roblox.com/v1/games?universeIds=${id}`
+	);
+	res.send(gameData.data);
+});
 
-app.get('/getInfo', (req, res) => {
-  axios.get('https://games.roblox.com/v1/games/list?model.pageContext.isSeeAllPage=true')
-    .then(res => res.data)
-    .then(data => {
-      let requests = [];
-      data.games.forEach(game => {
-        requests.push(axios.get(`https://games.roblox.com/v1/games?universeIds=${game.universeId}`))
-      })
-      let toReturn = [];
-      axios.all(requests)
-        .then(axios.spread((...responses) => {
-          responses.forEach(r => {
-            toReturn.push(r.data.data[0])
-          })
-          res.send(toReturn)
-        }))
-    })
-})
+app.get('/getInfo', (_req, res) => {
+	const gameInfo = await axios.get(
+		'https://games.roblox.com/v1/games/list?model.pageContext.isSeeAllPage=true'
+	);
+	const requests = gameInfo.games.map((game) =>
+		axios.get(
+			`https://games.roblox.com/v1/games?universeIds=${game.universeId}`
+		)
+	);
+	const responses = await Promise.all(requests);
+	res.send(responses.map((r) => r.data.data[0]));
+});
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-})
+	console.log(`API up on http://localhost:${port}`);
+});
