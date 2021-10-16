@@ -12,7 +12,7 @@ app.get('/list', async (_req, res) => {
 	res.send(gameList.data);
 });
 
-app.get('/get', (req, res) => {
+app.get('/get', async (req, res) => {
 	const id = req.params.id;
 	const gameData = await axios.get(
 		`https://games.roblox.com/v1/games?universeIds=${id}`
@@ -20,11 +20,11 @@ app.get('/get', (req, res) => {
 	res.send(gameData.data);
 });
 
-app.get('/getInfo', (_req, res) => {
+app.get('/getInfo', async (_req, res) => {
 	const gameInfo = await axios.get(
 		'https://games.roblox.com/v1/games/list?model.pageContext.isSeeAllPage=true'
 	);
-	const requests = gameInfo.games.map((game) =>
+	const requests = gameInfo.data.games.map((game) =>
 		axios.get(
 			`https://games.roblox.com/v1/games?universeIds=${game.universeId}`
 		)

@@ -1,16 +1,11 @@
-import React from 'react';
-import './game.css';
+import './Game.css';
 
-class Game extends React.Component {
-  render() {
-    return (
-      <div className="gamediv">
-        <h2>{this.props.name}</h2>
-        <p>Playing: {this.props.playing}</p>
-        <p>Visits: {this.props.visits}</p>
-      </div>
-    )
-  }
-}
-
-export default Game;
+export const Game = (props) => {
+	return (
+		<div className="gamediv">
+			<h2>{props.name}</h2>
+			<p>Playing: {props.playing}</p>
+			<p>Visits: {props.visits}</p>
+		</div>
+	);
+};

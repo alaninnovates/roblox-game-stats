@@ -1,42 +1,41 @@
 // import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
-import Game from './components/game';
-import React from 'react';
+import { Game } from './components/Game';
 
-const handleGames = (gamelist) => {
-  console.log(gamelist)
-  let gamedata = [];
-  gamelist.forEach(gameInfo => {
-    gamedata.push(<Game name={gameInfo.name} playing={gameInfo.playing} visits={gameInfo.visits} />)
-  })
-  console.log(gamedata)
-  return gamedata
-}
+const App = () => {
+	const [gameList, setGameList] = useState();
+	const fetchGames = async () => {
+		const data = await fetch('http://localhost:8000/getInfo').then((d) =>
+			d.json()
+		);
+		setGameList(data);
+	};
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      gamelist: [],
-    };
-  }
+	useEffect(() => {
+		fetchGames();
+		setInterval(() => {
+			fetchGames();
+		}, 30 * 1000);
+	}, []);
 
-  componentDidMount() {
-    fetch('http://localhost:8000/getInfo')
-      .then(res => res.json())
-      .then(data => {
-        this.setState({ gamelist: data })
-      })
-  }
-  // Format: 
-  // <Game name={this.state.game.data[0].name} playing={this.state.game.data[0].playing} visits={this.state.game.data[0].visits} />
-  render() {
-    return (
-      <div className="App">
-        {handleGames(this.state.gamelist)}
-      </div>
-    )
-  }
-}
+	return (
+		<div className="container">
+			<div className="game_list">
+				{gameList ? (
+					gameList.map((g) => (
+						<Game
+							name={g.name}
+							playing={g.playing}
+							visits={g.visits}
+						/>
+					))
+				) : (
+					<div className="load-center loading" />
+				)}
+			</div>
+		</div>
+	);
+};
 
 export default App;
